@@ -22,7 +22,7 @@ def upload_image():
             redirect(request.url)
         result_image_data = process_image_data(f.read(), ".png")
         return send_file(io.BytesIO(result_image_data),
-                         attachment_filename='gymranks.png',
+                         attachment_filename='poke-gymbadge-result.png',
                          mimetype='image/png')
 
     return render_template("upload_image.html")

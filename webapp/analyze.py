@@ -1,17 +1,10 @@
 from __future__ import division
-import sys
 import logging
 import cv2
 import numpy as np
 import colorsys
-# import matplotlib
-# import matplotlib.pyplot as plt
 
 class Level:
-
-    def __new__(cls):
-        _value_ = "level"
-
     def __init__(self, level, hue, required_xp, next):
         self.level = level
         self.hue = hue
@@ -36,8 +29,8 @@ def dimension(img):
     return (len(img[0]), len(img))
 
 def hsv2bgr(h, s, v):
-    # too complicated, I hate this
-    return (cv2.cvtColor(np.array([[[h, s, v]]], np.uint8), cv2.COLOR_HSV2BGR)[0][0]).astype(np.int)
+    # too complicated, I hate this...
+    return (cv2.cvtColor(np.array([[[h, s, v]]], np.uint8), cv2.COLOR_HSV2BGR)[0][0]).astype(np.float)
 
 def compare(a, b, eps):
     return abs(a - b) <= eps
