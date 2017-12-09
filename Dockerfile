@@ -1,7 +1,7 @@
 FROM heroku/heroku:16
 
 # Install pip and opencv
-RUN apt-get update && apt-get install -y python-pip python-opencv
+RUN apt-get update && apt-get install -y python-pip libsm6
 
 # Install dependencies
 ADD ./webapp/requirements.txt /tmp/requirements.txt
