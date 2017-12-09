@@ -18,6 +18,9 @@ class Level:
         self.required_xp = required_xp
         self.next = next
 
+    def __repr__(self):
+        return str(self.level)
+
 Level.GOLD = Level(3, 26, 30000, None)
 Level.SILVER = Level(2, 98, 4000, Level.GOLD)
 Level.BRONZE = Level(1, 14, 500, Level.SILVER)
@@ -43,7 +46,7 @@ def calc_remaining_xp(bar_width, badge_level):
     return max((1.0 - bar_width / FULL_BAR_WIDTH) * badge_level.next.required_xp, 0)
 
 def determine_badge_level(hsv_img, bar_rect):
-    delta_x, delta_y = (88, -6)
+    delta_x, delta_y = (88, -8)
     hsv = hsv_img[bar_rect[1] + delta_y][bar_rect[0] + delta_x]
     logging.debug("Badge color: %s", hsv)
     for level in (Level.SILVER, Level.BRONZE, Level.NONE):
@@ -86,9 +89,12 @@ def draw_xp_text(img, rect, xp, fg_color, bg_color):
                 (rect[0] + FULL_BAR_WIDTH - text_size[0][0], rect[1] - text_offset - text_margin),
                 font_face, font_size, fg_color, font_thickness, cv2.LINE_AA)
 
-def process_image_data(data, extension):
-    npdata = np.fromstring(data, np.uint8)
-    orig_img = cv2.imdecode(npdata, cv2.IMREAD_COLOR)
+def process_image_data_raw(orig_img):
+    orig_width, _ = dimension(orig_img)
+    if orig_width != SCREEN_WIDTH:
+        r = SCREEN_WIDTH / orig_width
+        orig_img = cv2.resize(orig_img, None, fx=r, fy=r, interpolation=cv2.INTER_NEAREST)
+
     hsv_img = cv2.cvtColor(orig_img, cv2.COLOR_BGR2HSV)
 
     bar_img = extract_bar_img(hsv_img)
@@ -110,5 +116,11 @@ def process_image_data(data, extension):
         bg_color = hsv2bgr(badge_level.next.hue, 120, 240)
         draw_xp_text(result_img, rect, remaining_xp, (0, 0, 0), bg_color)
 
-    result, buf = cv2.imencode(extension, result_img)
+    return result_img, bar_img
+
+def process_image_data(data, extension):
+    npdata = np.fromstring(data, np.uint8)
+    orig_img = cv2.imdecode(npdata, cv2.IMREAD_COLOR)
+    result_img, _ = process_image_data_raw(orig_img)
+    _, buf = cv2.imencode(extension, result_img)
     return buf.tobytes()
