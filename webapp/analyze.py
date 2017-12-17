@@ -17,7 +17,7 @@ class Level:
 Level.GOLD = Level(3, 26, 30000, None)
 Level.SILVER = Level(2, 98, 4000, Level.GOLD)
 Level.BRONZE = Level(1, 14, 500, Level.SILVER)
-Level.NONE = Level(0, 55, 0, Level.BRONZE)
+Level.NONE = Level(0, 57, 0, Level.BRONZE)
 
 logging.basicConfig(level=logging.DEBUG)
 
